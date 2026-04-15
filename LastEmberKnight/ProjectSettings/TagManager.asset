@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Player
+  - Enemy
+  - Boss
+  - Ground
+  - Shrine
+  - ExitDoor
+  - Shard
+  - Food
+  - Projectile
+  - Trigger
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  -
+  - Water
+  - UI
+  - Background
+  - Foreground
+  - Player
+  - Enemy
+  - PlayerProjectile
+  - EnemyProjectile
+  - Ground
+  - OneWayPlatform
+  - Trigger
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 1000
+    locked: 0
+  - name: FarBackground
+    uniqueID: 1001
+    locked: 0
+  - name: MidBackground
+    uniqueID: 1002
+    locked: 0
+  - name: NearBackground
+    uniqueID: 1003
+    locked: 0
+  - name: Platforms
+    uniqueID: 1004
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Characters
+    uniqueID: 1005
+    locked: 0
+  - name: Projectiles
+    uniqueID: 1006
+    locked: 0
+  - name: Foreground
+    uniqueID: 1007
+    locked: 0
+  - name: UI
+    uniqueID: 1008
+    locked: 0
+  - name: Effects
+    uniqueID: 1009
+    locked: 0

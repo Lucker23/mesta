@@ -204,7 +204,7 @@ namespace LastEmberKnight
     /// Central repository of every "magic number" used across the project.
     /// Import once, reference everywhere to keep values in sync.
     /// </summary>
-    public static class GameConstants
+    public static partial class GameConstants
     {
         // --- Level / zone structure ---
 

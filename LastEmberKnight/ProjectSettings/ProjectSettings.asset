@@ -182,6 +182,7 @@ PlayerSettings:
   m_EnableCrashReportAPI: 0
   m_EnableInputSystem: 1
   m_DisableOldInputManagerSupport: 0
+  activeInputHandler: 2
   cameraUsageDescription:
   locationUsageDescription:
   microphoneUsageDescription:

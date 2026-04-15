@@ -64,14 +64,17 @@ namespace LastEmberKnight
         // ─── Typing Speed ─────────────────────────────────────────────────────────
         private const float CHARS_PER_SECOND = 24f;
 
-        // ─── Story Lines ──────────────────────────────────────────────────────────
+        // ─── Story Lines — The Last Ember Knight ─────────────────────────────────
+        // His empire. One dragon. One night. He died.
+        // But ash remembers fire, and fire remembers its knight.
         private static readonly string[] StoryLines = new string[]
         {
-            "The empire is ash.",
-            "The knight is ash.",
-            "But from ash\u2026",
-            "all things begin again.",
-            "THE END"
+            "An empire. His empire.",
+            "One dragon. One night.",
+            "Nothing left.",
+            "But ash remembers fire.",
+            "And fire remembers its knight.",
+            "\u2014 THE LAST EMBER KNIGHT \u2014"
         };
 
         // ─── Lucker23 Terminal Lines ──────────────────────────────────────────────

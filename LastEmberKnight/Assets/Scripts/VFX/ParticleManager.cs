@@ -5,17 +5,21 @@
 // ParticleSystem API. Every effect type has its own object pool.
 //
 // Public methods:
-//   SpawnHitEffect(pos, color)    – 10-particle colour burst
-//   SpawnDustPuff(pos)            – foot-step dust
-//   SpawnEmberBurst(pos, count)   – fire/ember explosion
-//   SpawnSoulAbsorb(pos)          – soul pickup shimmer
-//   SpawnDeathEffect(pos)         – enemy death smoke + embers
-//   SpawnBossPhaseEffect(pos)     – dramatic boss-phase explosion
-//   SpawnLightBurst(pos)          – Ori-style pure light ring
-//   SpawnSlamImpact(pos)          – ground slam shockwave ring
+//   SpawnHitEffect(pos, color)                  – 10-particle colour burst
+//   SpawnDustPuff(pos)                          – foot-step dust
+//   SpawnEmberBurst(pos, count)                 – fire/ember explosion
+//   SpawnSoulAbsorb(pos)                        – soul pickup shimmer
+//   SpawnDeathEffect(pos)                       – enemy death smoke + embers
+//   SpawnBossPhaseEffect(pos)                   – dramatic boss-phase explosion
+//   SpawnLightBurst(pos)                        – Ori-style pure light ring
+//   SpawnSlamImpact(pos)                        – ground slam shockwave ring
+//   SpawnSoulEssenceDrain(enemyPos, playerPos)  – teal soul arc (enemy→player)
+//   SpawnAshBodyIdle(pos)                       – ambient ash smoulder halo
+//   SpawnOriMote(pos, zoneColor)                – long-life floating world mote
 //
 // All effects use color-over-lifetime, size-over-lifetime, and velocity curves.
 // =============================================================================
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -216,6 +220,129 @@ namespace LastEmberKnight
         /// <summary>Ground slam radial shockwave ring.</summary>
         public void SpawnSlamImpact(Vector3 pos)
             => _slamPool?.Get(pos);
+
+        /// <summary>
+        /// 8 teal soul particles arc bezier-style from dead enemy to player.
+        /// Called by EnemyBase.OnDeath — soul essence flowing back to the knight.
+        /// </summary>
+        public void SpawnSoulEssenceDrain(Vector3 enemyPos, Vector3 playerPos)
+        {
+            StartCoroutine(SoulDrainCoroutine(enemyPos, playerPos));
+        }
+
+        /// <summary>
+        /// Ambient ash smoulder halo — 3 near-stationary particles orbiting pos.
+        /// Creates the "he's still burning even when still" effect.
+        /// </summary>
+        public void SpawnAshBodyIdle(Vector3 pos)
+        {
+            GameObject go = new GameObject("AshBodyIdle");
+            go.transform.position = pos;
+            ParticleSystem ps = go.AddComponent<ParticleSystem>();
+
+            var main = ps.main;
+            main.maxParticles    = 8;
+            main.loop            = false;
+            main.playOnAwake     = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.startLifetime   = new ParticleSystem.MinMaxCurve(1.5f, 2.5f);
+            main.startSpeed      = new ParticleSystem.MinMaxCurve(0.01f, 0.05f);
+            main.startSize       = new ParticleSystem.MinMaxCurve(0.02f, 0.05f);
+            main.startColor      = new ParticleSystem.MinMaxGradient(
+                new Color(0.55f, 0.50f, 0.44f, 0.80f),
+                new Color(1.00f, 0.55f, 0.10f, 0.60f));
+            main.gravityModifier = new ParticleSystem.MinMaxCurve(-0.03f);
+
+            var em = ps.emission;
+            em.enabled = true;
+            em.SetBursts(new[] { new ParticleSystem.Burst(0f, 3) });
+
+            var sh = ps.shape;
+            sh.enabled   = true;
+            sh.shapeType = ParticleSystemShapeType.Circle;
+            sh.radius    = 0.30f;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            Gradient g = new Gradient();
+            g.SetKeys(
+                new[] {
+                    new GradientColorKey(new Color(0.55f, 0.50f, 0.44f), 0.0f),
+                    new GradientColorKey(new Color(1.00f, 0.55f, 0.10f), 0.5f),
+                    new GradientColorKey(new Color(0.20f, 0.18f, 0.15f), 1.0f)
+                },
+                new[] {
+                    new GradientAlphaKey(0.8f, 0.0f),
+                    new GradientAlphaKey(0.5f, 0.5f),
+                    new GradientAlphaKey(0.0f, 1.0f)
+                });
+            col.color = new ParticleSystem.MinMaxGradient(g);
+
+            var rend = go.GetComponent<ParticleSystemRenderer>();
+            rend.renderMode = ParticleSystemRenderMode.Billboard;
+            rend.material   = new Material(Shader.Find("Particles/Standard Unlit")
+                                        ?? Shader.Find("Sprites/Default"));
+
+            ps.Play();
+            Object.Destroy(go, 3.0f);
+        }
+
+        /// <summary>
+        /// Long-lifetime Ori-style ambient mote: a surviving ember of the old empire.
+        /// Called by ZoneManager on zone build — color matches zone accent.
+        /// Lifetime 8-15 s, tiny (0.02-0.04 size), slow upward drift.
+        /// </summary>
+        public void SpawnOriMote(Vector3 pos, Color zoneColor)
+        {
+            GameObject go = new GameObject("OriMote");
+            go.transform.position = pos;
+            ParticleSystem ps = go.AddComponent<ParticleSystem>();
+
+            var main = ps.main;
+            main.maxParticles    = 4;
+            main.loop            = false;
+            main.playOnAwake     = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.startLifetime   = new ParticleSystem.MinMaxCurve(8.0f, 15.0f);
+            main.startSpeed      = new ParticleSystem.MinMaxCurve(0.02f, 0.08f);
+            main.startSize       = new ParticleSystem.MinMaxCurve(0.02f, 0.04f);
+            main.startColor      = new Color(zoneColor.r, zoneColor.g, zoneColor.b, 0.75f);
+            main.gravityModifier = new ParticleSystem.MinMaxCurve(-0.02f);
+
+            var em = ps.emission;
+            em.enabled = true;
+            em.SetBursts(new[] { new ParticleSystem.Burst(0f, 2) });
+
+            var sh = ps.shape;
+            sh.enabled   = true;
+            sh.shapeType = ParticleSystemShapeType.Circle;
+            sh.radius    = 0.5f;
+
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            Gradient g = new Gradient();
+            g.SetKeys(
+                new[] {
+                    new GradientColorKey(zoneColor, 0.0f),
+                    new GradientColorKey(zoneColor, 0.8f),
+                    new GradientColorKey(zoneColor, 1.0f)
+                },
+                new[] {
+                    new GradientAlphaKey(0.00f, 0.00f),
+                    new GradientAlphaKey(0.75f, 0.10f),
+                    new GradientAlphaKey(0.60f, 0.70f),
+                    new GradientAlphaKey(0.00f, 1.00f)
+                });
+            col.color = new ParticleSystem.MinMaxGradient(g);
+
+            var rend = go.GetComponent<ParticleSystemRenderer>();
+            rend.renderMode = ParticleSystemRenderMode.Billboard;
+            rend.material   = new Material(Shader.Find("Particles/Standard Unlit")
+                                        ?? Shader.Find("Sprites/Default"));
+
+            ps.Play();
+            Object.Destroy(go, 16.0f);
+        }
 
         #endregion
 
@@ -435,6 +562,89 @@ namespace LastEmberKnight
             SetSizeOverLifetime(ps, 0.5f, 1.5f);
             SetRadialVelocity(ps, 3f);
             return ps;
+        }
+
+        #endregion
+
+        // ─────────────────────────────────────────────────────────────────────────
+        #region Soul Drain Coroutines
+
+        // 8 individual soul sparks arc one-by-one from enemy toward player
+        private IEnumerator SoulDrainCoroutine(Vector3 enemyPos, Vector3 playerPos)
+        {
+            const int   SOUL_COUNT   = 8;
+            const float SOUL_DURATION = 0.6f;
+            Color soulColor = new Color(0.40f, 0.90f, 1.00f);
+
+            for (int i = 0; i < SOUL_COUNT; i++)
+            {
+                yield return new WaitForSeconds(i * 0.04f);
+
+                GameObject go = new GameObject("SoulSpark");
+                go.transform.position = enemyPos + new Vector3(
+                    Random.Range(-0.30f, 0.30f),
+                    Random.Range(-0.20f, 0.20f), 0f);
+
+                ParticleSystem ps = go.AddComponent<ParticleSystem>();
+                var main = ps.main;
+                main.maxParticles    = 1;
+                main.loop            = false;
+                main.playOnAwake     = false;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+                main.startLifetime   = SOUL_DURATION;
+                main.startSpeed      = 0f;
+                main.startSize       = new ParticleSystem.MinMaxCurve(0.06f, 0.10f);
+                main.startColor      = soulColor;
+
+                var em = ps.emission;
+                em.enabled = true;
+                em.SetBursts(new[] { new ParticleSystem.Burst(0f, 1) });
+
+                var sh = ps.shape;
+                sh.enabled = false;
+
+                var col = ps.colorOverLifetime;
+                col.enabled = true;
+                Gradient g = new Gradient();
+                g.SetKeys(
+                    new[] {
+                        new GradientColorKey(soulColor, 0f),
+                        new GradientColorKey(Color.white, 1f)
+                    },
+                    new[] {
+                        new GradientAlphaKey(1.0f, 0.0f),
+                        new GradientAlphaKey(0.0f, 1.0f)
+                    });
+                col.color = new ParticleSystem.MinMaxGradient(g);
+
+                var rend = go.GetComponent<ParticleSystemRenderer>();
+                rend.renderMode = ParticleSystemRenderMode.Billboard;
+                rend.material   = new Material(Shader.Find("Particles/Standard Unlit")
+                                            ?? Shader.Find("Sprites/Default"));
+
+                ps.Play();
+                StartCoroutine(ArcToPlayer(go.transform, go.transform.position,
+                    playerPos, SOUL_DURATION));
+                Object.Destroy(go, SOUL_DURATION + 0.15f);
+            }
+        }
+
+        // Moves a transform along a quadratic bezier arc from 'from' to 'to' over duration.
+        // The arc peaks above the midpoint, giving the soul sparks a looping flight path.
+        private static IEnumerator ArcToPlayer(Transform t, Vector3 from, Vector3 to, float duration)
+        {
+            if (t == null) yield break;
+            Vector3 mid = (from + to) * 0.5f + Vector3.up * 0.8f;
+            float elapsed = 0f;
+            while (elapsed < duration && t != null)
+            {
+                elapsed += Time.deltaTime;
+                float pct = Mathf.Clamp01(elapsed / duration);
+                Vector3 p1 = Vector3.Lerp(from, mid, pct);
+                Vector3 p2 = Vector3.Lerp(mid,  to,  pct);
+                t.position = Vector3.Lerp(p1, p2, pct);
+                yield return null;
+            }
         }
 
         #endregion

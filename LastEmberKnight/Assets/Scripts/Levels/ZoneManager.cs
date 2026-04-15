@@ -154,6 +154,29 @@ namespace LastEmberKnight
             return (idx >= 0 && idx < ZoneTable.Length) ? ZoneTable[idx] : default;
         }
 
+        /// <summary>
+        /// One-line lore flavor text for each zone, shown during level transitions.
+        /// Each line is a fragment of the knight's story — he's walking through his
+        /// own ruined history toward the dragon that burned it all down.
+        /// </summary>
+        public static string GetZoneLoreText(ZoneType zone)
+        {
+            switch (zone)
+            {
+                case ZoneType.Ashfields:       return "These fields were green once. He remembers.";
+                case ZoneType.EmberCrypts:     return "The dead still guard what they could not save.";
+                case ZoneType.ShatteredRamparts: return "His kingdom's walls. Unrecognizable.";
+                case ZoneType.SlagPits:        return "The Dragon's fire runs deep here.";
+                case ZoneType.DrownedCitadel:  return "Even the sea could not put out this war.";
+                case ZoneType.BoneWastes:      return "Every bone here was someone's soldier.";
+                case ZoneType.ObsidianSpire:   return "Drakar's lieutenants sleep in crystal tombs.";
+                case ZoneType.TheWound:        return "Reality remembers the Dragon's passage.";
+                case ZoneType.DragonsApproach: return "He can smell the smoke now.";
+                case ZoneType.ThroneOfAsh:     return "The end. Or the beginning.";
+                default:                       return string.Empty;
+            }
+        }
+
         // =========================================================================
         //  Background construction
         // =========================================================================
@@ -295,7 +318,7 @@ namespace LastEmberKnight
             main.startColor = new ParticleSystem.MinMaxGradient(
                 new Color(1f, 0.5f, 0f, 0.8f), new Color(1f, 0.9f, 0.1f, 0.9f));
             main.gravityModifier = -0.1f;
-            emission.rateOverTime = 40f;
+            emission.rateOverTime = 60f;  // 40 × 1.5 — Ori density
         }
 
         private static void ConfigureFogParticles(
@@ -307,7 +330,7 @@ namespace LastEmberKnight
             main.startColor = new ParticleSystem.MinMaxGradient(
                 new Color(0.6f, 0.7f, 0.8f, 0.08f), new Color(0.8f, 0.85f, 0.9f, 0.12f));
             main.gravityModifier = 0f;
-            emission.rateOverTime = 5f;
+            emission.rateOverTime = 8f;  // 5 × 1.5 — Ori density
         }
 
         private static void ConfigureRainParticles(
@@ -319,7 +342,7 @@ namespace LastEmberKnight
             main.startColor = new Color(0.5f, 0.6f, 0.9f, 0.6f);
             main.gravityModifier = 1.5f;
             main.startRotation = new ParticleSystem.MinMaxCurve(-0.2f, 0.2f);
-            emission.rateOverTime = 200f;
+            emission.rateOverTime = 300f;  // 200 × 1.5 — Ori density
         }
 
         private static void ConfigureDustParticles(
@@ -331,7 +354,7 @@ namespace LastEmberKnight
             main.startColor = new ParticleSystem.MinMaxGradient(
                 new Color(0.7f, 0.6f, 0.4f, 0.3f), new Color(0.9f, 0.8f, 0.6f, 0.5f));
             main.gravityModifier = -0.05f;
-            emission.rateOverTime = 15f;
+            emission.rateOverTime = 22f;  // 15 × 1.5 — Ori density
         }
 
         private static void ConfigureSnowParticles(
@@ -342,7 +365,7 @@ namespace LastEmberKnight
             main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.15f);
             main.startColor = new Color(0.9f, 0.95f, 1f, 0.8f);
             main.gravityModifier = 0.3f;
-            emission.rateOverTime = 60f;
+            emission.rateOverTime = 90f;  // 60 × 1.5 — Ori density
         }
 
         private static void ConfigureLavaParticles(
@@ -354,7 +377,7 @@ namespace LastEmberKnight
             main.startColor = new ParticleSystem.MinMaxGradient(
                 new Color(1f, 0.2f, 0f, 1f), new Color(1f, 0.6f, 0f, 1f));
             main.gravityModifier = 2f;
-            emission.rateOverTime = 20f;
+            emission.rateOverTime = 30f;  // 20 × 1.5 — Ori density
         }
 
         // ── Lighting ──────────────────────────────────────────────────────────

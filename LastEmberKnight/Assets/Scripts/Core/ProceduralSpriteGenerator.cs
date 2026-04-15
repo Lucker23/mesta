@@ -30,102 +30,228 @@ namespace LastEmberKnight
         }
 
         // ─── PLAYER ──────────────────────────────────────────────────────────
-        // 18x26 pixel art: dark knight with glowing eyes, cape, ember sword
+        // 32×48 pixel art: dark armored knight who smoulders.
+        // Dark charcoal armor, glowing orange visor-eyes, blood-red cape with edge
+        // shadows, ember sword with molten crack lines, smoke wisps rising from
+        // helmet crown — he IS the last ember, walking.
         public static Sprite GeneratePlayerSprite()
         {
-            var t = NewTex(18, 26);
-            Color body     = new Color(0.15f, 0.12f, 0.10f);  // Dark charcoal
-            Color armor    = new Color(0.22f, 0.20f, 0.18f);  // Dark metal
-            Color accent   = new Color(0.70f, 0.30f, 0.05f);  // Ember orange trim
-            Color eyeGlow  = new Color(1.00f, 0.55f, 0.00f);  // Bright orange eyes
-            Color cape     = new Color(0.45f, 0.05f, 0.05f);  // Dark red cape
-            Color sword    = new Color(0.80f, 0.40f, 0.10f);  // Ember-lit sword
-            Color swordGlow= new Color(1.00f, 0.70f, 0.20f);  // Sword edge glow
-            Color outline  = new Color(0.04f, 0.03f, 0.03f);  // Near-black outline
-            Color hornClr  = new Color(0.55f, 0.50f, 0.45f);  // Helmet horns
+            var t = NewTex(32, 48);
 
-            // Helmet horns (top)
-            t.SetPixel(7,  25, hornClr); t.SetPixel(9,  25, hornClr);
-            t.SetPixel(7,  24, hornClr); t.SetPixel(9,  24, hornClr);
-            t.SetPixel(7,  23, outline); t.SetPixel(9,  23, outline);
+            // ── Palette ───────────────────────────────────────────────────────
+            Color body       = new Color(0.15f, 0.12f, 0.10f);         // dark charcoal
+            Color armor      = new Color(0.22f, 0.20f, 0.18f);         // dark metal
+            Color armorHi    = new Color(0.30f, 0.28f, 0.24f);         // armor highlight
+            Color accent     = new Color(0.70f, 0.30f, 0.05f);         // ember orange trim
+            Color eyeGlow    = new Color(1.00f, 0.55f, 0.00f);         // outer visor glow
+            Color eyeInner   = new Color(1.00f, 0.82f, 0.22f);         // inner visor hotspot
+            Color cape       = new Color(0.45f, 0.05f, 0.05f);         // blood-red cape
+            Color capeShadow = new Color(0.28f, 0.03f, 0.03f);         // cape edge shadow
+            Color sword      = new Color(0.80f, 0.40f, 0.10f);         // ember-lit blade
+            Color swordGlow  = new Color(1.00f, 0.70f, 0.20f);         // blade edge glow
+            Color swordCrack = new Color(1.00f, 0.65f, 0.00f);         // molten crack lines
+            Color outline    = new Color(0.04f, 0.03f, 0.03f);         // near-black outline
+            Color hornClr    = new Color(0.55f, 0.50f, 0.45f);         // helmet horns
+            // Smoke wisps — semi-transparent, rising from helmet
+            Color smoke0     = new Color(0.88f, 0.86f, 0.84f, 0.45f); // dense wisp base
+            Color smoke1     = new Color(0.90f, 0.88f, 0.86f, 0.28f); // mid wisp
+            Color smoke2     = new Color(0.92f, 0.90f, 0.88f, 0.12f); // faint wisp tip
 
-            // Helmet (rows 20-22)
-            for (int x = 5; x <= 12; x++) t.SetPixel(x, 22, armor);
-            for (int x = 4; x <= 13; x++) t.SetPixel(x, 21, armor);
-            for (int x = 4; x <= 13; x++) t.SetPixel(x, 20, armor);
-            // Visor slit
-            t.SetPixel(5, 21, outline); t.SetPixel(6, 21, outline);
-            t.SetPixel(7, 21, eyeGlow); t.SetPixel(8, 21, eyeGlow);
-            t.SetPixel(9, 21, eyeGlow); t.SetPixel(10, 21, eyeGlow);
-            t.SetPixel(11, 21, outline); t.SetPixel(12, 21, outline);
-            // Helmet bottom trim
-            for (int x = 4; x <= 13; x++) t.SetPixel(x, 20, accent);
+            // ── Smoke wisps (rows 44-47 — above helmet crown) ────────────────
+            // He is still burning inside — smoke rises even when standing still
+            for (int x = 12; x <= 19; x++) t.SetPixel(x, 44, smoke0);
+            for (int x = 11; x <= 20; x++) t.SetPixel(x, 45, smoke1);
+            for (int x = 12; x <= 19; x++) t.SetPixel(x, 46, smoke2);
+            // Wispy top — scattered pixels
+            t.SetPixel(13, 47, smoke2); t.SetPixel(15, 47, smoke2);
+            t.SetPixel(16, 47, smoke2); t.SetPixel(18, 47, smoke2);
 
-            // Neck
-            t.SetPixel(8, 19, body); t.SetPixel(9, 19, body);
+            // ── Helmet horns (rows 41-43) ─────────────────────────────────────
+            t.SetPixel(8, 43, hornClr); t.SetPixel(9,  43, hornClr);
+            t.SetPixel(22,43, hornClr); t.SetPixel(23, 43, hornClr);
+            t.SetPixel(8, 42, hornClr); t.SetPixel(9,  42, hornClr);
+            t.SetPixel(22,42, hornClr); t.SetPixel(23, 42, hornClr);
+            t.SetPixel(8, 41, outline); t.SetPixel(9,  41, outline);
+            t.SetPixel(22,41, outline); t.SetPixel(23, 41, outline);
 
-            // Chest / torso (rows 14-18)
-            for (int y = 14; y <= 18; y++)
-                for (int x = 4; x <= 13; x++)
+            // ── Helmet body (rows 35-40) ──────────────────────────────────────
+            for (int x = 9;  x <= 22; x++) t.SetPixel(x, 40, armor);
+            for (int x = 8;  x <= 23; x++) t.SetPixel(x, 39, armor);
+            for (int x = 8;  x <= 23; x++) t.SetPixel(x, 38, armor);
+            for (int x = 8;  x <= 23; x++) t.SetPixel(x, 37, armor);
+            for (int x = 8;  x <= 23; x++) t.SetPixel(x, 36, armor);
+            // Helmet bottom trim (accent band)
+            for (int x = 8;  x <= 23; x++) t.SetPixel(x, 35, accent);
+
+            // Visor slit — row 38: dark frame + wide amber glow + bright inner hotspot
+            t.SetPixel(8,  38, outline); t.SetPixel(9,  38, outline);
+            t.SetPixel(10, 38, eyeGlow); t.SetPixel(11, 38, eyeGlow);
+            t.SetPixel(12, 38, eyeInner); t.SetPixel(13, 38, eyeInner);
+            t.SetPixel(14, 38, eyeInner); t.SetPixel(15, 38, eyeInner);
+            t.SetPixel(16, 38, eyeInner); t.SetPixel(17, 38, eyeInner);
+            t.SetPixel(18, 38, eyeGlow);  t.SetPixel(19, 38, eyeGlow);
+            t.SetPixel(20, 38, eyeGlow);
+            t.SetPixel(21, 38, outline); t.SetPixel(22, 38, outline); t.SetPixel(23, 38, outline);
+            // Visor second row — inner glow bleeds down one row
+            for (int x = 12; x <= 17; x++) t.SetPixel(x, 37, eyeGlow);
+
+            // ── Neck (rows 33-34) ─────────────────────────────────────────────
+            for (int y = 33; y <= 34; y++)
+                for (int x = 13; x <= 18; x++)
+                    t.SetPixel(x, y, body);
+
+            // ── Cape (behind body — painted first, body goes on top) ──────────
+            // Outer shadow edge → cape body → inner coverage behind torso
+            for (int y = 10; y <= 34; y++)
+            {
+                t.SetPixel(4,  y, capeShadow);
+                t.SetPixel(5,  y, cape);
+                t.SetPixel(6,  y, cape);
+                t.SetPixel(25, y, cape);
+                t.SetPixel(26, y, cape);
+                t.SetPixel(27, y, capeShadow);
+            }
+            // Extra coverage behind torso
+            for (int y = 23; y <= 34; y++)
+            {
+                t.SetPixel(7,  y, cape);
+                t.SetPixel(24, y, cape);
+            }
+            // Cape widens at bottom
+            for (int y = 10; y <= 22; y++)
+            {
+                t.SetPixel(3,  y, capeShadow);
+                t.SetPixel(28, y, capeShadow);
+            }
+
+            // ── Chest / torso (rows 25-32) ────────────────────────────────────
+            for (int y = 25; y <= 32; y++)
+                for (int x = 8; x <= 23; x++)
                     t.SetPixel(x, y, armor);
-            // Chest emblem (ember cross)
-            t.SetPixel(8, 17, accent); t.SetPixel(9, 17, accent);
-            t.SetPixel(8, 16, accent); t.SetPixel(9, 16, accent);
-            t.SetPixel(7, 16, accent); t.SetPixel(10, 16, accent);
-            // Pauldrons
-            for (int y = 16; y <= 18; y++)
-            { t.SetPixel(3, y, armor); t.SetPixel(14, y, armor); }
+            // Highlight top row of chest
+            for (int x = 8; x <= 23; x++) t.SetPixel(x, 32, armorHi);
 
-            // Cape (behind — rows 6-18, left side)
-            for (int y = 6; y <= 18; y++)
+            // Ember cross emblem at chest center
+            for (int x = 13; x <= 18; x++) { t.SetPixel(x, 30, accent); t.SetPixel(x, 29, accent); }
+            t.SetPixel(12, 29, accent); t.SetPixel(19, 29, accent);
+            t.SetPixel(12, 30, accent); t.SetPixel(19, 30, accent);
+            // Glow at emblem center
+            t.SetPixel(15, 29, eyeGlow); t.SetPixel(16, 29, eyeGlow);
+            t.SetPixel(15, 30, eyeGlow); t.SetPixel(16, 30, eyeGlow);
+
+            // Pauldrons (shoulder plates)
+            for (int y = 29; y <= 32; y++)
             {
-                t.SetPixel(2,  y, cape);
-                t.SetPixel(15, y, cape);
-            }
-            for (int y = 6; y <= 12; y++)
-            {
-                t.SetPixel(1,  y, cape);
-                t.SetPixel(16, y, cape);
+                t.SetPixel(6,  y, armor); t.SetPixel(7,  y, armor);
+                t.SetPixel(24, y, armor); t.SetPixel(25, y, armor);
             }
 
-            // Belt
-            for (int x = 4; x <= 13; x++) t.SetPixel(x, 13, accent);
+            // ── Belt (row 24) ─────────────────────────────────────────────────
+            for (int x = 8; x <= 23; x++) t.SetPixel(x, 24, accent);
 
-            // Hips / lower armor (rows 10-12)
-            for (int y = 10; y <= 12; y++)
-                for (int x = 5; x <= 12; x++)
+            // ── Hips / lower armor (rows 18-23) ──────────────────────────────
+            for (int y = 18; y <= 23; y++)
+                for (int x = 9; x <= 22; x++)
                     t.SetPixel(x, y, armor);
 
-            // Left leg (rows 4-9)
-            for (int y = 4; y <= 9; y++)
-            {
-                t.SetPixel(5, y, body); t.SetPixel(6, y, body);
-                t.SetPixel(7, y, body);
-            }
-            // Right leg
-            for (int y = 4; y <= 9; y++)
-            {
-                t.SetPixel(10, y, body); t.SetPixel(11, y, body);
-                t.SetPixel(12, y, body);
-            }
-            // Knee guards
-            t.SetPixel(5, 7, armor); t.SetPixel(6, 7, armor); t.SetPixel(7, 7, armor);
-            t.SetPixel(10, 7, armor); t.SetPixel(11, 7, armor); t.SetPixel(12, 7, armor);
+            // ── Left leg (rows 7-17, x 9-13) ──────────────────────────────────
+            for (int y = 7; y <= 17; y++)
+                for (int x = 9; x <= 13; x++)
+                    t.SetPixel(x, y, body);
+            // Knee guard
+            for (int x = 9; x <= 13; x++) t.SetPixel(x, 13, armor);
 
-            // Boots
-            for (int x = 4; x <= 8; x++)  t.SetPixel(x, 3, armor);
-            for (int x = 4; x <= 8; x++)  t.SetPixel(x, 2, armor);
-            for (int x = 9; x <= 13; x++) t.SetPixel(x, 3, armor);
-            for (int x = 9; x <= 13; x++) t.SetPixel(x, 2, armor);
+            // ── Right leg (rows 7-17, x 18-22) ───────────────────────────────
+            for (int y = 7; y <= 17; y++)
+                for (int x = 18; x <= 22; x++)
+                    t.SetPixel(x, y, body);
+            // Knee guard
+            for (int x = 18; x <= 22; x++) t.SetPixel(x, 13, armor);
 
-            // Sword (right hand — col 14-16, rows 11-19)
-            t.SetPixel(15, 19, swordGlow); t.SetPixel(15, 18, sword);
-            t.SetPixel(15, 17, sword);     t.SetPixel(15, 16, sword);
-            t.SetPixel(15, 15, sword);     t.SetPixel(15, 14, swordGlow);
-            t.SetPixel(15, 13, swordGlow); t.SetPixel(15, 12, sword);
-            t.SetPixel(15, 11, sword);
+            // ── Left boot (rows 3-6, x 8-14) ──────────────────────────────────
+            for (int y = 3; y <= 6; y++)
+                for (int x = 8; x <= 14; x++)
+                    t.SetPixel(x, y, armor);
+            for (int x = 7; x <= 15; x++) { t.SetPixel(x, 2, outline); t.SetPixel(x, 1, outline); }
+
+            // ── Right boot (rows 3-6, x 17-23) ───────────────────────────────
+            for (int y = 3; y <= 6; y++)
+                for (int x = 17; x <= 23; x++)
+                    t.SetPixel(x, y, armor);
+            for (int x = 16; x <= 24; x++) { t.SetPixel(x, 2, outline); t.SetPixel(x, 1, outline); }
+
+            // ── Sword (right hand — x 25-27, rows 18-35) ──────────────────────
+            // Blade core
+            for (int y = 18; y <= 34; y++) t.SetPixel(25, y, sword);
+            // Outer glow edge
+            for (int y = 19; y <= 33; y++) t.SetPixel(26, y, swordGlow);
+            // Blade tip
+            t.SetPixel(25, 35, swordGlow);
             // Crossguard
-            t.SetPixel(14, 14, sword); t.SetPixel(16, 14, sword);
+            t.SetPixel(24, 26, sword); t.SetPixel(25, 26, sword);
+            t.SetPixel(26, 26, sword); t.SetPixel(27, 26, sword);
+            // Molten crack lines — orange pixels along blade center
+            t.SetPixel(25, 22, swordCrack); t.SetPixel(26, 22, swordCrack);
+            t.SetPixel(25, 27, swordCrack); t.SetPixel(26, 27, swordCrack);
+            t.SetPixel(25, 31, swordCrack); t.SetPixel(26, 31, swordCrack);
+
+            return MakeSprite(t, 16f);
+        }
+
+        /// <summary>
+        /// 8×12 single-frame smoke wisp sprite for the helmet smoke VFX object.
+        /// Semi-transparent gray-white gradient: alpha 0.8 at base, 0.0 at top.
+        /// Attach to an animated GameObject above the knight's helmet crown.
+        /// </summary>
+        public static Sprite GenerateSmokeWispSprite()
+        {
+            var t = NewTex(8, 12);
+            Color smokeBase = new Color(0.88f, 0.86f, 0.84f);
+            Color smokeMid  = new Color(0.90f, 0.89f, 0.87f);
+            Color smokeTop  = new Color(0.94f, 0.93f, 0.92f);
+
+            // Row 0 — densest, at helmet crown
+            t.SetPixel(3, 0, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.80f));
+            t.SetPixel(4, 0, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.80f));
+            t.SetPixel(5, 0, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.60f));
+            // Row 1
+            t.SetPixel(3, 1, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.70f));
+            t.SetPixel(4, 1, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.75f));
+            t.SetPixel(5, 1, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.65f));
+            t.SetPixel(6, 1, new Color(smokeBase.r, smokeBase.g, smokeBase.b, 0.40f));
+            // Rows 2-3 — expanding
+            for (int x = 2; x <= 6; x++)
+            {
+                float a2 = Mathf.Lerp(0.55f, 0.25f, (x - 2) / 4f);
+                float a3 = Mathf.Lerp(0.45f, 0.20f, (x - 2) / 4f);
+                t.SetPixel(x, 2, new Color(smokeMid.r, smokeMid.g, smokeMid.b, a2));
+                t.SetPixel(x, 3, new Color(smokeMid.r, smokeMid.g, smokeMid.b, a3));
+            }
+            // Rows 4-6 — wide and thin
+            for (int x = 1; x <= 6; x++)
+            {
+                float a4 = Mathf.Lerp(0.35f, 0.10f, (x - 1) / 5f);
+                float a5 = Mathf.Lerp(0.28f, 0.08f, (x - 1) / 5f);
+                float a6 = Mathf.Lerp(0.22f, 0.06f, (x - 1) / 5f);
+                t.SetPixel(x, 4, new Color(smokeMid.r, smokeMid.g, smokeMid.b, a4));
+                t.SetPixel(x, 5, new Color(smokeMid.r, smokeMid.g, smokeMid.b, a5));
+                t.SetPixel(x, 6, new Color(smokeTop.r, smokeTop.g, smokeTop.b, a6));
+            }
+            // Rows 7-9 — near-invisible wisps
+            for (int x = 0; x <= 6; x++)
+            {
+                float a7 = Mathf.Lerp(0.15f, 0.03f, x / 6f);
+                float a8 = Mathf.Lerp(0.10f, 0.02f, x / 6f);
+                t.SetPixel(x, 7, new Color(smokeTop.r, smokeTop.g, smokeTop.b, a7));
+                t.SetPixel(x, 8, new Color(smokeTop.r, smokeTop.g, smokeTop.b, a8));
+            }
+            for (int x = 0; x <= 5; x++)
+                t.SetPixel(x, 9, new Color(smokeTop.r, smokeTop.g, smokeTop.b,
+                    Mathf.Lerp(0.07f, 0.01f, x / 5f)));
+            // Rows 10-11 — almost invisible
+            t.SetPixel(1, 10, new Color(smokeTop.r, smokeTop.g, smokeTop.b, 0.04f));
+            t.SetPixel(2, 10, new Color(smokeTop.r, smokeTop.g, smokeTop.b, 0.03f));
+            t.SetPixel(1, 11, new Color(smokeTop.r, smokeTop.g, smokeTop.b, 0.02f));
 
             return MakeSprite(t, 16f);
         }
@@ -133,10 +259,10 @@ namespace LastEmberKnight
         // ─── PLAYER DASH AFTERIMAGE ───────────────────────────────────────────
         public static Sprite GeneratePlayerDashSprite()
         {
-            var t = NewTex(18, 26);
+            var t = NewTex(32, 48);
             Color ghost = new Color(0.8f, 0.4f, 0.1f, 0.4f);
-            for (int x = 3; x <= 14; x++)
-                for (int y = 2; y <= 22; y++)
+            for (int x = 4; x <= 27; x++)
+                for (int y = 1; y <= 40; y++)
                     if (Random.value > 0.4f)
                         t.SetPixel(x, y, ghost);
             return MakeSprite(t, 16f);

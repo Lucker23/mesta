@@ -38,7 +38,7 @@ namespace LastEmberKnight
         public const float HitboxReach         = 2.0f;
         public const int   HitStopFrames       = 3;
         public const int   BossHitStopFrames   = 5;
-        public const float ParryStartupFrames  = 4;         // frames (~0.067s at 60fps)
+        public const int   ParryStartupFrames  = 4;          // frames (~0.067s at 60fps)
         public const float ParryStunDuration   = 0.5f;
         public const float ParrySlowDuration   = 0.2f;
         public const float ParrySlowScale      = 0.15f;
@@ -107,8 +107,71 @@ namespace LastEmberKnight
         public const string FoodTag    = "Food";
 
         // ── Save keys ─────────────────────────────────────────────────────────
-        public const string SaveFileName = "save.json";
-        public const string SaveKeyLevel = "level";
-        public const string SaveKeyShards= "shards";
+        public const string SaveFileName     = "save.json";
+        public const string SaveKeyLevel     = "level";
+        public const string SaveKeyShards    = "shards";
+        public const string SaveKeyOptions   = "save_options";
+        public const string SaveKeyAbilities = "save_abilities";
+
+        // ── Aliases / compatibility names ─────────────────────────────────────
+        // Scripts generated from the original spec used slightly different names.
+        // These aliases keep everything compiling without touching 50+ files.
+
+        // Game structure
+        public const int   TotalZones           = 10;        // alias for ZoneCount
+        public const int   BossLevelOffset       = 4;
+        public const float BaseDifficulty        = 1.0f;     // alias for DifficultyBase
+
+        // Scene names
+        public const string SceneTitle           = "Title";
+        public const string SceneGame            = "Main";   // alias for MainScene
+        public const string SceneCredits         = "Credits";
+
+        // Tags (Tag* prefix used by many scripts)
+        public const string TagPlayer            = "Player";
+        public const string TagEnemy             = "Enemy";
+        public const string TagBoss              = "Boss";
+        public const string TagGround            = "Ground";
+        public const string TagWall              = "Wall";
+        public const string TagShrine            = "Shrine";
+
+        // Layer name strings (used with LayerMask.NameToLayer)
+        public const string LayerGround          = "Ground";
+        public const string LayerEnemy           = "Enemy";
+        public const string LayerPlayer          = "Player";
+        public const string LayerProjectile      = "Projectile";
+        public const string LayerWall            = "Wall";
+
+        // Movement aliases
+        public const float PlayerMoveSpeed       = 6f;       // alias for MoveSpeed
+        public const float PlayerJumpForce       = 14f;      // alias for JumpForce
+        public const float JumpInputBuffer       = 0.10f;    // alias for JumpBuffer
+        public const float DoubleJumpMultiplier  = 0.88f;   // alias for DoubleJumpMult
+        public const float WallSlideGravityScale = 0.3f;    // alias for WallSlideGravity
+        public const float SlamAoeHalfWidth      = 3f;      // alias for SlamAOEWidth
+        public const float SlamDamageMultiplier  = 1.5f;    // alias for SlamDamageMult
+
+        // Combat aliases
+        public const int   DefaultHitStopFrames  = 3;       // alias for HitStopFrames
+        public const float ComboHitboxRange      = 2.0f;   // alias for HitboxReach
+        public const float ComboHit3DamageMulti  = 1.8f;   // alias for ComboHit3DamageMult
+        public const int   ParryStartupFramesInt = 4;
+        public const int   FireShieldMaxHits      = 3;      // alias for FireShieldHits
+
+        // Ability aliases
+        public const float EmberWaveDamageMulti  = 1.2f;   // alias for EmberWaveDamageMult
+        public const float InfernoAoeWidth        = 5.0f;  // alias for InfernoWidth
+        public const float InfernoAoeHeight       = 3.0f;  // alias for InfernoHeight
+        public const float InfernoDamageMulti     = 2.0f;  // alias for InfernoDamageMult
+        public const float SoulBlastSpeed         = 18.0f;
+        public const float SoulBlastDamageMulti   = 2.5f;
+
+        // Mana aliases
+        public const float DefaultMaxMana         = 50.0f;  // alias for PlayerMaxMP
+        public const float ManaRegenRate          = 1.2f;   // alias for PlayerManaRegen
+
+        // Camera shake
+        public const float SlamShakeMagnitude     = 0.35f;
+        public const float SlamShakeDuration      = 0.25f;
     }
 }
